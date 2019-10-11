@@ -4,7 +4,7 @@ import ipdb
 from models.keras_resnet_functional import resnet_v1
 
 BATCH_SIZE = 128
-NUM_EPOCHS = 2
+NUM_EPOCHS = 200
 
 
 def limit_gpu_memory_growth():
@@ -57,6 +57,7 @@ def train(model, ds, criterion, optimizer, loss_meter, acc_meter, epoch):
 
         output, loss = train_step(model, images, labels, criterion, optimizer)
 
+        #ipdb.set_trace()
         loss_meter(loss)
         acc_meter(labels, output)
 
@@ -74,7 +75,6 @@ def train_step(model, images, labels, criterion, optimizer):
     optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
     return output, loss
-
 
 def test(model, ds, criterion, loss_meter, acc_meter, epoch):
     for i, (images, labels) in enumerate(ds):
@@ -101,10 +101,9 @@ def main():
     model = resnet_v1((32, 32, 3), 20)
 
     print(model.summary())
-
     criterion = tf.keras.losses.SparseCategoricalCrossentropy()
     optimizer = tf.keras.optimizers.SGD(
-        learning_rate=0.01,
+        learning_rate=0.001,
         momentum=0.9,
         nesterov=True
     )
